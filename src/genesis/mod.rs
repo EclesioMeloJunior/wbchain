@@ -1,5 +1,5 @@
 use crate::consensus::genesis::{GenesisConsensus, ProductionAuthorities};
-use crate::primitives::{Block, Header, Sig};
+use crate::primitives::{Block, Header, Sig, Zero};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
@@ -16,13 +16,13 @@ impl Genesis {
 
     pub fn create_genesis_block(self) -> Block {
         let mut parent_header = Sha256::new();
-        parent_header.update(b"genesis_block_parent_header");
+        parent_header.update(b"[genesis_block_parent_header]");
 
         let result = parent_header.finalize();
 
         Block {
             header: Header {
-                number: 0,
+                number: Zero,
                 sig: Sig {
                     vrf_fst: 0,
                     vrf_snd: 0,

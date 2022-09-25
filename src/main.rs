@@ -13,5 +13,7 @@ fn main() {
     let genesis = Genesis::new(genesis_contents);
     let block = genesis.create_genesis_block();
 
-    println!("{:?}", block);
+    let genesis_block_hash = block.header.hash();
+
+    println!("{:x}", genesis_block_hash);
 }
