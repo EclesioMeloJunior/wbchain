@@ -13,7 +13,7 @@ fn main() {
     let genesis = Genesis::new(genesis_contents);
     let block = genesis.create_genesis_block();
 
-    let genesis_block_hash = block.header.hash();
+    let genesis_block_hash = block.header.hash::<sha2::Sha256>();
 
     println!("{:x}", genesis_block_hash);
 }

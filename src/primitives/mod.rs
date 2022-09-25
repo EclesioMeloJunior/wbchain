@@ -1,6 +1,7 @@
 use std::borrow::Borrow;
 
 use sha2::digest::Output;
+use sha2::digest::OutputSizeUser;
 use sha2::{Digest, Sha256};
 #[derive(Debug)]
 pub struct BlockNumber(pub u32);
@@ -20,8 +21,8 @@ pub struct Header {
 }
 
 impl Header {
-    pub fn hash(&self) -> Output<sha2::Sha256> {
-        let mut hasher = Sha256::new();
+    pub fn hash<T: OutputSizeUser + Digest>(&self) -> Output<T> {
+        let mut hasher = T::new();
 
         let fst = self.sig.vrf_fst.to_le_bytes();
         let snd = self.sig.vrf_snd.to_le_bytes();
