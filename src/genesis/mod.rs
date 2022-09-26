@@ -1,11 +1,14 @@
 use crate::consensus::genesis::{GenesisConsensus, ProductionAuthorities};
-use crate::primitives::{Block, Header, Sig, Zero};
+use crate::primitives::{Block, Header, Sig, ZERO};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
 #[derive(Deserialize, Debug)]
 pub struct Genesis {
+    #[serde(default)]
     consensus: GenesisConsensus,
+
+    #[serde(default)]
     production_authorities: ProductionAuthorities,
 }
 
@@ -22,7 +25,7 @@ impl Genesis {
 
         Block {
             header: Header {
-                number: Zero,
+                number: ZERO,
                 sig: Sig {
                     vrf_fst: 0,
                     vrf_snd: 0,

@@ -1,19 +1,17 @@
-use std::borrow::Borrow;
-
 use sha2::digest::Output;
 use sha2::digest::OutputSizeUser;
-use sha2::{Digest, Sha256};
-#[derive(Debug)]
+use sha2::Digest;
+#[derive(Debug, Copy, Clone)]
 pub struct BlockNumber(pub u32);
 
-pub const Zero: BlockNumber = BlockNumber(0);
+pub const ZERO: BlockNumber = BlockNumber(0);
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Block {
     pub header: Header,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Header {
     pub number: BlockNumber,
     pub sig: Sig<u32, u32, u32>,
@@ -38,7 +36,7 @@ impl Header {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Sig<D, P, S> {
     pub vrf_fst: D,
     pub vrf_snd: P,

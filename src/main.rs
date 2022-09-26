@@ -1,3 +1,4 @@
+mod blocktree;
 mod consensus;
 mod genesis;
 mod primitives;
