@@ -22,5 +22,8 @@ fn main() {
 
     let genesis_block_hash = block.header.hash::<sha2::Sha256>();
 
-    println!("{:x}", genesis_block_hash);
+    println!("GENESIS BLOCK {:x}", genesis_block_hash);
+    println!("STARTING BLOCK PRODUCTION...");
+
+    
 }

@@ -1,4 +1,4 @@
-use crate::consensus::genesis::{GenesisConsensus, ProductionAuthorities};
+use crate::consensus::{Epoch, ProductionAuthorities};
 use crate::primitives::{Block, Header, Sig, ZERO};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
@@ -6,7 +6,7 @@ use sha2::{Digest, Sha256};
 #[derive(Deserialize, Debug)]
 pub struct Genesis {
     #[serde(default)]
-    consensus: GenesisConsensus,
+    epoch: Epoch,
 
     #[serde(default)]
     production_authorities: ProductionAuthorities,
