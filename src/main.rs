@@ -5,11 +5,17 @@ mod primitives;
 
 use crate::genesis::Genesis;
 use std::fs;
+use std::io;
+
+fn load_genesis_file(path: &str) -> io::Result<String> {
+    fs::read_to_string(String::from(path))
+}
 
 fn main() {
-    let gensis_file_path = "./chain_spec/genesis.json";
-    let genesis_contents =
-        fs::read_to_string(String::from(gensis_file_path)).expect("failed to read genesis_file");
+    let genesis_contents: String = match load_genesis_file("./chain_spec/genesis.json") {
+        Err(err) => panic!("{}", err),
+        Ok(contents) => contents,
+    };
 
     let genesis = Genesis::new(genesis_contents);
     let block = genesis.create_genesis_block();
