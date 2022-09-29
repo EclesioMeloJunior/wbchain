@@ -3,13 +3,13 @@ use crate::primitives::{Block, Header, Sig, ZERO};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct Genesis {
     #[serde(default)]
-    epoch: Epoch,
+    pub epoch: Epoch,
 
     #[serde(default)]
-    production_authorities: ProductionAuthorities,
+    pub production_authorities: ProductionAuthorities,
 }
 
 impl Genesis {

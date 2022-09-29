@@ -9,5 +9,8 @@ edition = "2021"
 serde = { version = "1.0.144", features = ["derive"] }
 serde_json = "1.0"
 sha2 = "0.10"
-hex-literal = "0.3.4"
+hex = "0.4.3"
 schnorrkel = "0.10.2"
+num = "0.4.0"
+merlin = "3.0.0"
+tokio = { version = "1", features = ["full"] }
