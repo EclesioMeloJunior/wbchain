@@ -1,4 +1,5 @@
 use super::{Epoch, EpochRandomness, ProductionAuthorities};
+use crate::Node;
 use merlin::Transcript;
 use num::{bigint::Sign, rational::Ratio, BigInt};
 use schnorrkel::{
@@ -37,6 +38,7 @@ fn calculate_threshold(c: f64, authorities_len: u32, l_vrf: u32) -> BigInt {
 #[derive(Debug, Clone)]
 pub struct Slot(u32, u32, VRFInOut, VRFProof);
 
+#[derive(Debug)]
 pub struct Babe {
     epoch_info: Epoch,
     current_threshold: BigInt,
@@ -138,61 +140,67 @@ fn run_lottery(
     claimable_slots
 }
 
+#[derive(Debug)]
 pub struct BlockProductionEngine {
     babe: Babe,
 }
 
 impl BlockProductionEngine {
-    fn handle_current_epoch(&mut self) {
-
-    }
+    fn handle_current_epoch(&mut self) {}
 }
 
-impl BlockProductionEngine {
-    // start_from_genesis will take in consideration the randomness
-    // set in the genesis.json file to define the slots leaders
-    pub fn start_from_genesis(
-        epoch: Epoch,
-        authorities: ProductionAuthorities,
-        keypair: &Keypair,
-    ) -> BlockProductionEngine {
+impl<'a> From<&mut Node<'a>> for BlockProductionEngine {
+    fn from(node: &mut Node) -> Self {
         let start_at_epoch: u32 = 1;
         let first_slot = 1;
+
+        let keypair = &node.keypair;
+        let genesis = node.genesis;
+
+        let genesis_epoch = genesis.epoch.clone();
+        let production_authorities = genesis.production_authorities.clone();
 
         let transcripts = define_epoch_transcripts(
             start_at_epoch,
             first_slot,
-            epoch.epoch_length,
-            epoch.randomness.clone(),
+            genesis_epoch.epoch_length,
+            genesis_epoch.randomness.clone(),
         );
 
         let epoch_slots = define_epoch_slots(start_at_epoch, first_slot, transcripts, keypair);
 
-        let threshold =
-            calculate_threshold(epoch.c, authorities.0.len() as u32, VRF_FIRST_OUTPUT_LEN);
+        let threshold = calculate_threshold(
+            genesis_epoch.c,
+            production_authorities.0.len() as u32,
+            VRF_FIRST_OUTPUT_LEN,
+        );
 
         let claimable_slots = run_lottery(
             &keypair.public,
-            epoch.randomness.clone(),
+            genesis_epoch.randomness,
             &threshold,
             epoch_slots.clone(),
         );
 
-        let babe = Babe::new(epoch, authorities, threshold, epoch_slots, claimable_slots);
+        let babe = Babe::new(
+            genesis.epoch.clone(),
+            genesis.production_authorities.clone(),
+            threshold,
+            epoch_slots,
+            claimable_slots,
+        );
         BlockProductionEngine { babe }
     }
 }
 
-pub async fn run_block_production(
-    epoch: Epoch,
-    authorities: ProductionAuthorities,
-    keypair: &Keypair,
-) -> Result<(), String> {
+pub async fn run_block_production<'a>(node: &mut Node<'a>) -> Result<(), String> {
     println!("STARTING BLOCK PRODUCTION...");
-    let mut block_production_engine =
-        BlockProductionEngine::start_from_genesis(epoch, authorities, keypair);
 
-    block_production_engine.handle
+    let block = node.genesis.create_genesis_block();
+    node.genesis_hash = Some(block.header.hash::<sha2::Sha256>());
+
+    let mut engine = BlockProductionEngine::from(node);
+    engine.handle_current_epoch();
 
     Ok(())
 }

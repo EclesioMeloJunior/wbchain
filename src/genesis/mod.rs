@@ -17,7 +17,7 @@ impl Genesis {
         serde_json::from_str(json_file.as_str()).unwrap()
     }
 
-    pub fn create_genesis_block(self) -> Block {
+    pub fn create_genesis_block(&self) -> Block {
         let mut parent_header = Sha256::new();
         parent_header.update(b"[genesis_block_parent_header]");
 
